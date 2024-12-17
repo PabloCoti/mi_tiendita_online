@@ -1,3 +1,14 @@
+-- DB CREATION
+
+/* 
+DIFFERENCE BETWEEN DELETED_AT AND STATUS
+
+Both can be used for "deletion" keeping the record in the database but they have different purposes:
+- deleted_at: is for soft delete, HIDES the record from the user.
+- status: is for logical delete, keeps the record VISIBLE to the user but with a status that indicates that the record is not active. 
+
+ */
+
 IF NOT EXISTS (SELECT *
 FROM sys.databases
 WHERE name = 'GDA00594-OT-Pablo-Coti')
@@ -23,7 +34,11 @@ BEGIN
     CREATE TABLE roles
     (
         id INT IDENTITY(1, 1) PRIMARY KEY,
+        code VARCHAR(45),
         name VARCHAR(45),
+        created_at DATETIME DEFAULT GETDATE(),
+        updated_at DATETIME DEFAULT NULL,
+        deleted_at DATETIME DEFAULT NULL,
     );
 END
 
@@ -36,13 +51,13 @@ BEGIN
         id INT IDENTITY(1, 1) PRIMARY KEY,
         role_id INT FOREIGN KEY REFERENCES roles(id),
         full_name VARCHAR(45),
-        status INT,
+        status INT DEFAULT 1,
         email VARCHAR(45),
         password VARCHAR(45),
         phone_number VARCHAR(45),
         birth_date DATE,
-        created_at DATETIME,
-        updated_at DATETIME NULL,
+        created_at DATETIME DEFAULT GETDATE(),
+        updated_at DATETIME DEFAULT NULL,
     );
 END
 
@@ -55,9 +70,6 @@ BEGIN
         id INT IDENTITY(1, 1) PRIMARY KEY,
         user_id INT FOREIGN KEY REFERENCES users(id),
         nit VARCHAR(245),
-        full_name VARCHAR(345),
-        phone_number VARCHAR(45),
-        email VARCHAR(45),
     );
 END
 
@@ -69,11 +81,11 @@ BEGIN
     (
         id INT IDENTITY(1, 1) PRIMARY KEY,
         customer_id INT FOREIGN KEY REFERENCES customers(id),
-        status INT,
+        status INT DEFAULT 1,
         address VARCHAR(545),
         total FLOAT,
-        created_at DATETIME,
-        updated_at DATETIME NULL,
+        created_at DATETIME DEFAULT GETDATE(),
+        updated_at DATETIME DEFAULT NULL,
     );
 END
 
@@ -85,9 +97,9 @@ BEGIN
     (
         id INT IDENTITY(1, 1) PRIMARY KEY,
         name VARCHAR(45),
-        created_at DATETIME,
-        updated_at DATETIME NULL,
-        deleted_at DATETIME NULL,
+        created_at DATETIME DEFAULT GETDATE(),
+        updated_at DATETIME DEFAULT NULL,
+        deleted_at DATETIME DEFAULT NULL,
     );
 END
 
@@ -104,10 +116,10 @@ BEGIN
         code VARCHAR(45),
         stock FLOAT,
         price FLOAT,
-        picture BINARY,
-        created_at datetime,
-        updated_at datetime NULL,
-        deleted_at datetime NULL,
+        picture BINARY NULL,
+        created_at datetime DEFAULT GETDATE(),
+        updated_at datetime DEFAULT NULL,
+        deleted_at datetime DEFAULT NULL,
     );
 END
 

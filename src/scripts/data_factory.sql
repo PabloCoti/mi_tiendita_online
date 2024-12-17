@@ -1,3 +1,6 @@
+USE [GDA00594-OT-Pablo-Coti];
+GO
+
 INSERT INTO roles
     (name)
 VALUES
@@ -43,38 +46,38 @@ VALUES
 
 -- Insert customers
 INSERT INTO customers
-    (user_id, nit, full_name, phone_number, email)
+    (user_id, nit)
 VALUES
-    (1, '123456789', 'John Doe', '1234567890', 'john.doe@example.com'),
-    (2, '987654321', 'Jane Smith', '0987654321', 'jane.smith@example.com'),
-    (3, '111111111', 'Alice Johnson', '1111111111', 'alice.johnson@example.com'),
-    (4, '222222222', 'Bob Brown', '2222222222', 'bob.brown@example.com'),
-    (5, '333333333', 'Charlie Davis', '3333333333', 'charlie.davis@example.com'),
-    (6, '444444444', 'David Evans', '4444444444', 'david.evans@example.com'),
-    (7, '555555555', 'Eve Foster', '5555555555', 'eve.foster@example.com'),
-    (8, '666666666', 'Frank Green', '6666666666', 'frank.green@example.com'),
-    (9, '777777777', 'Grace Harris', '7777777777', 'grace.harris@example.com'),
-    (10, '888888888', 'Hank Irving', '8888888888', 'hank.irving@example.com'),
-    (11, '999999999', 'Ivy Johnson', '9999999999', 'ivy.johnson@example.com'),
-    (12, '101010101', 'Jack King', '1010101010', 'jack.king@example.com'),
-    (13, '121212121', 'Karen Lee', '1212121212', 'karen.lee@example.com'),
-    (14, '131313131', 'Larry Moore', '1313131313', 'larry.moore@example.com'),
-    (15, '141414141', 'Mona Nelson', '1414141414', 'mona.nelson@example.com'),
-    (16, '151515151', 'Nina Owens', '1515151515', 'nina.owens@example.com'),
-    (17, '161616161', 'Oscar Perry', '1616161616', 'oscar.perry@example.com'),
-    (18, '171717171', 'Paul Quinn', '1717171717', 'paul.quinn@example.com'),
-    (19, '181818181', 'Quincy Roberts', '1818181818', 'quincy.roberts@example.com'),
-    (20, '191919191', 'Rachel Smith', '1919191919', 'rachel.smith@example.com'),
-    (21, '202020202', 'Steve Turner', '2020202020', 'steve.turner@example.com'),
-    (22, '212121212', 'Tina Underwood', '2121212121', 'tina.underwood@example.com'),
-    (23, '222222222', 'Uma Vance', '2222222222', 'uma.vance@example.com'),
-    (24, '232323232', 'Victor White', '2323232323', 'victor.white@example.com'),
-    (25, '242424242', 'Wendy Xander', '2424242424', 'wendy.xander@example.com'),
-    (26, '252525252', 'Xander Young', '2525252525', 'xander.young@example.com'),
-    (27, '262626262', 'Yara Zane', '2626262626', 'yara.zane@example.com'),
-    (28, '272727272', 'Zack Allen', '2727272727', 'zack.allen@example.com'),
-    (29, '282828282', 'Amy Baker', '2828282828', 'amy.baker@example.com'),
-    (30, '292929292', 'Brian Clark', '2929292929', 'brian.clark@example.com');
+    (1, '123456789' ),
+    (2, '987654321' ),
+    (3, '111111111' ),
+    (4, '222222222' ),
+    (5, '333333333' ),
+    (6, '444444444' ),
+    (7, '555555555' ),
+    (8, '666666666' ),
+    (9, '777777777' ),
+    (10, '888888888'),
+    (11, '999999999'),
+    (12, '101010101'),
+    (13, '121212121'),
+    (14, '131313131'),
+    (15, '141414141'),
+    (16, '151515151'),
+    (17, '161616161'),
+    (18, '171717171'),
+    (19, '181818181'),
+    (20, '191919191'),
+    (21, '202020202'),
+    (22, '212121212'),
+    (23, '222222222'),
+    (24, '232323232'),
+    (25, '242424242'),
+    (26, '252525252'),
+    (27, '262626262'),
+    (28, '272727272'),
+    (29, '282828282'),
+    (30, '292929292');
 
 -- Insert orders
 INSERT INTO orders

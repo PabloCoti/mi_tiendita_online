@@ -4,7 +4,8 @@
   "description": "Sistema WEB para la empresa \"MI TIENDITA ONLINE\", dicha empresa se encuentra expandiendo sus operaciones y requiere un sistema en donde sus clientes puedan ingresar a comprar sus productos (Artículos de consumo diario), así como gestionar las entregas de sus pedidos.",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "node index.js",
+    "dev": "nodemon index.js"
   },
   "repository": {
     "type": "git",

@@ -6,18 +6,23 @@ BEGIN
 END
 GO
 
-CREATE OR ALTER PROCEDURE sp_create_role
+CREATE OR ALTER PROCEDURE create_role
+    @code VARCHAR(45),
     @name VARCHAR(45)
 AS
 BEGIN
     INSERT INTO roles
-        (name)
+        (code, name)
     VALUES
-        (@name);
+        (@code, @name);
+
+    SELECT *
+    FROM roles
+    WHERE id = SCOPE_IDENTITY();
 END
 GO
 
-CREATE OR ALTER PROCEDURE sp_read_roles
+CREATE OR ALTER PROCEDURE read_roles
 AS
 BEGIN
     SELECT *
@@ -25,7 +30,7 @@ BEGIN
 END
 GO
 
-CREATE OR ALTER PROCEDURE sp_read_roles_by_id
+CREATE OR ALTER PROCEDURE read_roles_by_id
     @id INT
 AS
 BEGIN
@@ -35,27 +40,29 @@ BEGIN
 END
 GO
 
-CREATE OR ALTER PROCEDURE sp_update_role
+CREATE OR ALTER PROCEDURE update_role
     @id INT,
     @name VARCHAR(45)
 AS
 BEGIN
     UPDATE roles 
-    SET name = @name 
+    SET name = @name, updated_at = GETDATE()
     WHERE id = @id;
 END
 GO
 
-CREATE OR ALTER PROCEDURE sp_delete_role
+CREATE OR ALTER PROCEDURE delete_role
     @id INT
 AS
 BEGIN
-    DELETE FROM roles WHERE id = @id;
+    UPDATE roles
+    SET deleted_at = GETDATE()
+    WHERE id = @id;
 END
 GO
 
 -- USER
-CREATE OR ALTER PROCEDURE sp_create_user
+CREATE OR ALTER PROCEDURE create_user
     @role_id INT,
     @full_name VARCHAR(45),
     @email VARCHAR(45),
@@ -64,18 +71,18 @@ CREATE OR ALTER PROCEDURE sp_create_user
     @birth_date DATE
 AS
 BEGIN
-    DECLARE @created_at DATETIME = GETDATE();
-    DECLARE @updated_at DATETIME = GETDATE();
-    DECLARE @status INT = 1;
-
     INSERT INTO users
-        (role_id, full_name, status, email, password, phone_number, birth_date, created_at, updated_at)
+        (role_id, full_name, email, password, phone_number, birth_date)
     VALUES
-        (@role_id, @full_name, @status, @email, @password, @phone_number, @birth_date, @created_at, @updated_at);
+        (@role_id, @full_name, @email, @password, @phone_number, @birth_date);
+
+    SELECT *
+    FROM users
+    WHERE id = SCOPE_IDENTITY();
 END
 GO
 
-CREATE OR ALTER PROCEDURE sp_read_users
+CREATE OR ALTER PROCEDURE read_users
 AS
 BEGIN
     SELECT *
@@ -83,7 +90,17 @@ BEGIN
 END
 GO
 
-CREATE OR ALTER PROCEDURE sp_update_user
+CREATE OR ALTER PROCEDURE read_users_by_id
+    @id INT
+AS
+BEGIN
+    SELECT *
+    FROM users
+    WHERE id = @id;
+END
+GO
+
+CREATE OR ALTER PROCEDURE update_user
     @id INT,
     @role_id INT,
     @full_name VARCHAR(45),
@@ -100,22 +117,23 @@ BEGIN
 END
 GO
 
-CREATE OR ALTER PROCEDURE sp_create_customer
+CREATE OR ALTER PROCEDURE create_customer
     @user_id INT,
-    @nit VARCHAR(245),
-    @full_name VARCHAR(345),
-    @phone_number VARCHAR(45),
-    @email VARCHAR(45)
+    @nit VARCHAR(245)
 AS
 BEGIN
     INSERT INTO customers
-        (user_id, nit, full_name, phone_number, email)
+        (user_id, nit)
     VALUES
-        (@user_id, @nit, @full_name, @phone_number, @email);
+        (@user_id, @nit);
+
+    SELECT *
+    FROM customers
+    WHERE id = SCOPE_IDENTITY();
 END
 GO
 
-CREATE OR ALTER PROCEDURE sp_read_customers
+CREATE OR ALTER PROCEDURE read_customers
 AS
 BEGIN
     SELECT *
@@ -123,47 +141,45 @@ BEGIN
 END
 GO
 
-CREATE OR ALTER PROCEDURE sp_update_customer
-    @id INT,
-    @user_id INT,
-    @nit VARCHAR(245),
-    @full_name VARCHAR(345),
-    @phone_number VARCHAR(45),
-    @email VARCHAR(45)
-AS
-BEGIN
-    UPDATE customers
-    SET user_id = @user_id, nit = @nit, full_name = @full_name, phone_number = @phone_number, email = @email
-    WHERE id = @id;
-END
-GO
-
-CREATE OR ALTER PROCEDURE sp_delete_customer
+CREATE OR ALTER PROCEDURE read_customers_by_id
     @id INT
 AS
 BEGIN
-    DELETE FROM customers
+    SELECT *
+    FROM customers
     WHERE id = @id;
 END
 GO
 
-CREATE OR ALTER PROCEDURE sp_create_order
-    @customer_id INT,
-    @status INT,
-    @address VARCHAR(545),
-    @total FLOAT,
-    @created_at DATETIME,
-    @updated_at DATETIME
+CREATE OR ALTER PROCEDURE update_customer
+    @id INT,
+    @nit VARCHAR(245)
 AS
 BEGIN
-    INSERT INTO orders
-        (customer_id, status, address, total, created_at, updated_at)
-    VALUES
-        (@customer_id, @status, @address, @total, @created_at, @updated_at);
+    UPDATE customers
+    SET nit = @nit
+    WHERE id = @id;
 END
 GO
 
-CREATE OR ALTER PROCEDURE sp_read_orders
+CREATE OR ALTER PROCEDURE create_order
+    @customer_id INT,
+    @address VARCHAR(545),
+    @total FLOAT
+AS
+BEGIN
+    INSERT INTO orders
+        (customer_id, address, total)
+    VALUES
+        (@customer_id, @address, @total);
+
+    SELECT *
+    FROM orders
+    WHERE id = SCOPE_IDENTITY();
+END
+GO
+
+CREATE OR ALTER PROCEDURE read_orders
 AS
 BEGIN
     SELECT *
@@ -171,36 +187,44 @@ BEGIN
 END
 GO
 
-CREATE OR ALTER PROCEDURE sp_update_order
-    @id INT,
-    @customer_id INT,
-    @status INT,
-    @address VARCHAR(545),
-    @total FLOAT,
-    @updated_at DATETIME
+CREATE OR ALTER PROCEDURE read_orders_by_id
+    @id INT
 AS
 BEGIN
-    UPDATE orders
-    SET customer_id = @customer_id, status = @status, address = @address, total = @total, updated_at = @updated_at
+    SELECT *
+    FROM orders
     WHERE id = @id;
 END
 GO
 
-CREATE OR ALTER PROCEDURE sp_create_product_category
-    @name VARCHAR(45),
-    @created_at DATETIME,
-    @updated_at DATETIME,
-    @deleted_at DATETIME
+CREATE OR ALTER PROCEDURE update_order
+    @id INT,
+    @status INT,
+    @address VARCHAR(545)
 AS
 BEGIN
-    INSERT INTO product_categories
-        (name, created_at, updated_at, deleted_at)
-    VALUES
-        (@name, @created_at, @updated_at, @deleted_at);
+    UPDATE orders
+    SET status = @status, address = @address, updated_at = GETDATE()
+    WHERE id = @id;
 END
 GO
 
-CREATE OR ALTER PROCEDURE sp_read_product_categories
+CREATE OR ALTER PROCEDURE create_product_category
+    @name VARCHAR(45)
+AS
+BEGIN
+    INSERT INTO product_categories
+        (name)
+    VALUES
+        (@name);
+
+    SELECT *
+    FROM product_categories
+    WHERE id = SCOPE_IDENTITY();
+END
+GO
+
+CREATE OR ALTER PROCEDURE read_product_categories
 AS
 BEGIN
     SELECT *
@@ -208,49 +232,59 @@ BEGIN
 END
 GO
 
-CREATE OR ALTER PROCEDURE sp_update_product_category
-    @id INT,
-    @name VARCHAR(45),
-    @updated_at DATETIME,
-    @deleted_at DATETIME
-AS
-BEGIN
-    UPDATE product_categories
-    SET name = @name, updated_at = @updated_at, deleted_at = @deleted_at
-    WHERE id = @id;
-END
-GO
-
-CREATE OR ALTER PROCEDURE sp_delete_product_category
+CREATE OR ALTER PROCEDURE read_product_categories_by_id
     @id INT
 AS
 BEGIN
-    DELETE FROM product_categories
+    SELECT *
+    FROM product_categories
     WHERE id = @id;
 END
 GO
 
-CREATE OR ALTER PROCEDURE sp_create_product
+CREATE OR ALTER PROCEDURE update_product_category
+    @id INT,
+    @name VARCHAR(45)
+AS
+BEGIN
+    UPDATE product_categories
+    SET name = @name, updated_at = GETDATE()
+    WHERE id = @id;
+END
+GO
+
+CREATE OR ALTER PROCEDURE delete_product_category
+    @id INT
+AS
+BEGIN
+    UPDATE product_categories
+    SET deleted_at = GETDATE()
+    WHERE id = @id;
+END
+GO
+
+CREATE OR ALTER PROCEDURE create_product
     @product_category_id INT,
     @name VARCHAR(45),
     @brand VARCHAR(45),
     @code VARCHAR(45),
     @stock FLOAT,
     @price FLOAT,
-    @picture BINARY,
-    @created_at DATETIME,
-    @updated_at DATETIME,
-    @deleted_at DATETIME
+    @picture BINARY
 AS
 BEGIN
     INSERT INTO products
-        (product_category_id, name, brand, code, stock, price, picture, created_at, updated_at, deleted_at)
+        (product_category_id, name, brand, code, stock, price, picture)
     VALUES
-        (@product_category_id, @name, @brand, @code, @stock, @price, @picture, @created_at, @updated_at, @deleted_at);
+        (@product_category_id, @name, @brand, @code, @stock, @price, @picture);
+
+    SELECT *
+    FROM products
+    WHERE id = SCOPE_IDENTITY();
 END
 GO
 
-CREATE OR ALTER PROCEDURE sp_read_products
+CREATE OR ALTER PROCEDURE read_products
 AS
 BEGIN
     SELECT *
@@ -258,7 +292,17 @@ BEGIN
 END
 GO
 
-CREATE OR ALTER PROCEDURE sp_update_product
+CREATE OR ALTER PROCEDURE read_products_by_id
+    @id INT
+AS
+BEGIN
+    SELECT *
+    FROM products
+    WHERE id = @id;
+END
+GO
+
+CREATE OR ALTER PROCEDURE update_product
     @id INT,
     @product_category_id INT,
     @name VARCHAR(45),
@@ -266,27 +310,26 @@ CREATE OR ALTER PROCEDURE sp_update_product
     @code VARCHAR(45),
     @stock FLOAT,
     @price FLOAT,
-    @picture BINARY,
-    @updated_at DATETIME,
-    @deleted_at DATETIME
+    @picture BINARY
 AS
 BEGIN
     UPDATE products
-    SET product_category_id = @product_category_id, name = @name, brand = @brand, code = @code, stock = @stock, price = @price, picture = @picture, updated_at = @updated_at, deleted_at = @deleted_at
+    SET product_category_id = @product_category_id, name = @name, brand = @brand, code = @code, stock = @stock, price = @price, picture = @picture, updated_at = GETDATE()
     WHERE id = @id;
 END
 GO
 
-CREATE OR ALTER PROCEDURE sp_delete_product
+CREATE OR ALTER PROCEDURE delete_product
     @id INT
 AS
 BEGIN
-    DELETE FROM products
+    UPDATE products
+    SET deleted_at = GETDATE()
     WHERE id = @id;
 END
 GO
 
-CREATE OR ALTER PROCEDURE sp_create_product_order
+CREATE OR ALTER PROCEDURE create_product_order
     @order_id INT,
     @product_id INT,
     @quantity INT,
@@ -298,10 +341,14 @@ BEGIN
         (order_id, product_id, quantity, price, subtotal)
     VALUES
         (@order_id, @product_id, @quantity, @price, @subtotal);
+
+    SELECT *
+    FROM product_orders
+    WHERE id = SCOPE_IDENTITY();
 END
 GO
 
-CREATE OR ALTER PROCEDURE sp_read_product_orders
+CREATE OR ALTER PROCEDURE read_product_orders
 AS
 BEGIN
     SELECT *
@@ -309,7 +356,7 @@ BEGIN
 END
 GO
 
-CREATE OR ALTER PROCEDURE sp_update_product_order
+CREATE OR ALTER PROCEDURE update_product_order
     @id INT,
     @order_id INT,
     @product_id INT,
@@ -324,7 +371,7 @@ BEGIN
 END
 GO
 
-CREATE OR ALTER PROCEDURE sp_delete_product_order
+CREATE OR ALTER PROCEDURE delete_product_order
     @id INT
 AS
 BEGIN
@@ -333,45 +380,3 @@ BEGIN
 END
 GO
 
--- Mixture of tables
-CREATE OR ALTER PROCEDURE sp_create_order_with_details
-    @customer_id INT,
-    @status INT,
-    @address VARCHAR(545),
-    @total FLOAT,
-    @products_json NVARCHAR(MAX)
-AS
-BEGIN
-    BEGIN TRANSACTION;
-
-    BEGIN TRY
-        INSERT INTO orders
-        (customer_id, status, address, total, created_at, updated_at)
-    VALUES
-        (@customer_id, @status, @address, @total, GETDATE(), NULL);
-        
-        DECLARE @order_id INT = SCOPE_IDENTITY(); 
-        
-        INSERT INTO product_orders
-        (order_id, product_id, quantity, price, subtotal)
-    SELECT
-        @order_id,
-        product_id,
-        quantity,
-        price,
-        quantity * price
-    FROM OPENJSON(@products_json) 
-        WITH (
-            product_id INT '$.product_id',
-            quantity INT '$.quantity',
-            price FLOAT '$.price'
-        );
-        
-        COMMIT TRANSACTION;
-    END TRY
-    BEGIN CATCH
-        ROLLBACK TRANSACTION;
-        THROW;
-    END CATCH
-END
-GO
