@@ -1,26 +1,26 @@
-// sql files excecution could be automated with fs library
-
 require("dotenv").config();
 
-const sql = require("mssql");
+const { Sequelize } = require('sequelize');
 
-const sqlConfig = {
-  user: process.env.DB_USER,
-  password: process.env.DB_PASSWORD,
-  database: process.env.DB_NAME,
-  server: process.env.DB_SERVER,
-  options: {
-    encrypt: false, // set to true if working with Azure
-    trustServerCertificate: true,
+const sequelize = new Sequelize(process.env.DB_NAME, process.env.DB_USER, process.env.DB_PASSWORD, {
+  host: process.env.DB_SERVER,
+  dialect: 'mssql',
+  dialectOptions: {
+    options: {
+      encrypt: process.env.DB_ENCRYPT || true,
+      trustServerCertificate: true,
+    },
   },
-};
+  logging: false,
+});
 
-const poolPromise = new sql.ConnectionPool(sqlConfig)
-  .connect()
-  .then((pool) => {
-    console.log("Conexión a SQL Server exitosa");
-    return pool;
-  })
-  .catch((err) => console.error("Conexión fallida:", err));
+(async () => {
+  try {
+    await sequelize.authenticate();
+    console.log('SQL server connection successful');
+  } catch (error) {
+    console.error('Failed connection:', error);
+  }
+})();
 
-module.exports = poolPromise;
+module.exports = sequelize;

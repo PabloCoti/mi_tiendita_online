@@ -1,21 +1,18 @@
-require("dotenv").config();
-
 const express = require("express");
-const db = require("./db/db");
 const app = express();
 
-app.get("/test-db", async (req, res) => {
-  try {
-    const pool = await db; // Espera la conexión al pool
-    const result = await pool.request().query("SELECT 1 AS Test"); // Prueba una consulta
-    res.json(result.recordset);
-  } catch (error) {
-    console.error("Error al conectar a la base de datos:", error);
-    res.status(500).send("Error de conexión a la base de datos");
-  }
-});
+app.use(express.json({ limit: '50mb' })); // exagerated limit, mainly for testing
+app.use(express.urlencoded({ limit: '50mb', extended: true })); // exagerated limit, mainly for testing
 
-const PORT = process.env.PORT || 3000;
+app.use('/auth', require('./routes/authRoutes'));
+app.use('/roles', require('./routes/roleRoutes'));
+app.use('/users', require('./routes/userRoutes'));
+app.use('/orders', require('./routes/orderRoutes'));
+app.use('/products', require('./routes/productRoutes'));
+app.use('/customers', require('./routes/customerRoutes'));
+app.use('/product-categories', require('./routes/productCategoryRoutes'));
+
+const PORT = process.env.PORT || 4000;
 app.listen(PORT, () => {
-  console.log(`Servidor corriendo en http://localhost:${PORT}`);
+  console.log(`Server running in http://localhost:${PORT}`);
 });
